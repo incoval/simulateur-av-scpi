@@ -3,7 +3,7 @@ import { calculateSCPI, SCPIParams, formatEuro } from "@/lib/calculations";
 import { exportPDF } from "@/lib/pdf-export";
 import ParamSlider from "@/components/ParamSlider";
 import KPICards from "@/components/KPICards";
-import SimChart from "@/components/SimChart";
+import SCPIChart from "@/components/SCPIChart";
 import SimTable from "@/components/SimTable";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
@@ -63,7 +63,7 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
           { label: "Revenus cumulés", value: formatEuro(last?.revenusCumules ?? 0), tooltip: "Total des revenus perçus sur la durée" },
           { label: `Revenu mensuel (an ${params.dureeTotale})`, value: formatEuro(last?.revenuMensuel ?? 0) },
         ]} />
-        <SimChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules }))} />
+        <SCPIChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, revenusCumules: r.revenusCumules, revenuAnnuel: r.revenuAnnuel, revenuMensuel: r.revenuMensuel }))} />
         <SimTable
           headers={["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Rés. cumulés (€)", "Revenus cum. (€)", "Capital (€)"]}
           rows={rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.resultatCumules, r.revenusCumules, r.capital])}
