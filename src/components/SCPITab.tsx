@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { calculateSCPI, SCPIParams, formatEuro } from "@/lib/calculations";
-import { exportPDF } from "@/lib/pdf-export";
+import { exportPDFWithChart } from "@/lib/pdf-export";
 import ParamSlider from "@/components/ParamSlider";
 import KPICards from "@/components/KPICards";
 import SCPIChart from "@/components/SCPIChart";
@@ -26,19 +26,31 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
   const [params, setParams] = useState<SCPIParams>({ ...DEFAULTS });
   const [customRate, setCustomRate] = useState(false);
   const [exportError, setExportError] = useState("");
+  const chartRef = useRef<HTMLDivElement>(null);
 
   const update = (key: keyof SCPIParams, v: number) => setParams(p => ({ ...p, [key]: v }));
 
   const rows = useMemo(() => calculateSCPI(params), [params]);
   const last = rows[rows.length - 1];
 
-  const handleExport = () => {
+  const kpis = [
+    { label: "Capital final", value: formatEuro(last?.capital ?? 0) },
+    { label: "Versements cumulés", value: formatEuro(last?.versementsCumules ?? 0) },
+    { label: "Revenus cumulés", value: formatEuro(last?.revenusCumules ?? 0) },
+    { label: `Revenu mensuel (an ${params.dureeTotale})`, value: formatEuro(last?.revenuMensuel ?? 0) },
+  ];
+
+  const handleExport = async () => {
     if (!clientInfo.nom || !clientInfo.prenom || !clientInfo.age) {
       setExportError("Remplissez Nom, Prénom et Âge");
       return;
     }
+    if (!chartRef.current) {
+      setExportError("Graphique non disponible");
+      return;
+    }
     setExportError("");
-    exportPDF({
+    await exportPDFWithChart({
       title: "Simulation SCPI",
       client: { nom: clientInfo.nom, prenom: clientInfo.prenom, age: Number(clientInfo.age) },
       params: {
@@ -48,8 +60,8 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
         "Durée versements": `${params.dureeVersements} ans`,
         "Durée totale": `${params.dureeTotale} ans`,
       },
-      headers: ["Année", "Vers. cumulés", "Vers. annuel", "Rev. mensuel", "Rev. annuel", "Rés. cumulés", "Revenus cum.", "Capital"],
-      rows: rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.resultatCumules, r.revenusCumules, r.capital]),
+      kpis,
+      chartElement: chartRef.current,
     });
   };
 
@@ -57,13 +69,10 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Left — Results */}
       <div className="flex-1 min-w-0">
-        <KPICards kpis={[
-          { label: "Capital final", value: formatEuro(last?.capital ?? 0) },
-          { label: "Versements cumulés", value: formatEuro(last?.versementsCumules ?? 0) },
-          { label: "Revenus cumulés", value: formatEuro(last?.revenusCumules ?? 0), tooltip: "Total des revenus perçus sur la durée" },
-          { label: `Revenu mensuel (an ${params.dureeTotale})`, value: formatEuro(last?.revenuMensuel ?? 0) },
-        ]} />
-        <SCPIChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, revenusCumules: r.revenusCumules, revenuAnnuel: r.revenuAnnuel, revenuMensuel: r.revenuMensuel }))} />
+        <KPICards kpis={kpis.map((k, i) => i === 2 ? { ...k, tooltip: "Total des revenus perçus sur la durée" } : k)} />
+        <div ref={chartRef}>
+          <SCPIChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, revenusCumules: r.revenusCumules, revenuAnnuel: r.revenuAnnuel, revenuMensuel: r.revenuMensuel }))} />
+        </div>
         <SimTable
           headers={["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Rés. cumulés (€)", "Revenus cum. (€)", "Capital (€)"]}
           rows={rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.resultatCumules, r.revenusCumules, r.capital])}
