@@ -14,6 +14,12 @@ interface KPI {
   value: string;
 }
 
+// Normalize narrow no-break spaces (U+202F) and no-break spaces (U+00A0) to regular spaces
+// jsPDF renders these Unicode spaces as "/" or garbled characters
+function sanitize(text: string): string {
+  return text.replace(/[\u202F\u00A0]/g, ' ');
+}
+
 // Legacy table-based export (used by AV and PER)
 interface PDFExportOptions {
   title: string;
@@ -55,7 +61,7 @@ export function exportPDF(options: PDFExportOptions) {
   doc.text('Hypothèses :', 14, y);
   y += 6;
   Object.entries(params).forEach(([key, value]) => {
-    doc.text(`• ${key} : ${value}`, 18, y);
+    doc.text(sanitize(`• ${key} : ${value}`), 18, y);
     y += 5;
   });
 
@@ -64,7 +70,7 @@ export function exportPDF(options: PDFExportOptions) {
   autoTable(doc, {
     startY: y,
     head: [headers],
-    body: rows.map(row => row.map(cell => typeof cell === 'number' ? formatNumber(cell) : cell)),
+    body: rows.map(row => row.map(cell => typeof cell === 'number' ? sanitize(formatNumber(cell)) : sanitize(String(cell)))),
     styles: { fontSize: 7, cellPadding: 2 },
     headStyles: { fillColor: [30, 45, 80], textColor: 255, fontSize: 7 },
     alternateRowStyles: { fillColor: [245, 245, 245] },
@@ -103,7 +109,7 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
   doc.text('Hypothèses :', margin, y);
   y += 6;
   Object.entries(params).forEach(([key, value]) => {
-    doc.text(`• ${key} : ${value}`, margin + 4, y);
+    doc.text(sanitize(`• ${key} : ${value}`), margin + 4, y);
     y += 5;
   });
 
@@ -124,11 +130,11 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
 
     doc.setFontSize(9);
     doc.setTextColor(120, 120, 120);
-    doc.text(kpi.label, xPos, yPos);
+    doc.text(sanitize(kpi.label), xPos, yPos);
 
     doc.setFontSize(12);
     doc.setTextColor(30, 45, 80);
-    doc.text(kpi.value, xPos, yPos + 5);
+    doc.text(sanitize(kpi.value), xPos, yPos + 5);
   });
 
   y += Math.ceil(kpis.length / 2) * 12 + 8;
