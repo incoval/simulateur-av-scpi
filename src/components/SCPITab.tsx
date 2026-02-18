@@ -16,6 +16,7 @@ const DEFAULTS: SCPIParams = {
   versementMensuel: 750,
   dureeVersements: 25,
   dureeTotale: 50,
+  fraisEntree: 0,
 };
 
 interface SCPITabProps {
@@ -59,6 +60,7 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
         "Versement mensuel": formatEuro(params.versementMensuel),
         "Durée versements": `${params.dureeVersements} ans`,
         "Durée totale": `${params.dureeTotale} ans`,
+        ...(params.fraisEntree > 0 ? { "Frais d'entrée": `${params.fraisEntree} %` } : {}),
       },
       kpis,
       chartElement: chartRef.current,
@@ -135,6 +137,10 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
 
           <ParamSlider label="Durée versements" value={params.dureeVersements} onChange={v => update("dureeVersements", v)} min={1} max={50} suffix="ans" />
           <ParamSlider label="Durée totale" value={params.dureeTotale} onChange={v => update("dureeTotale", v)} min={1} max={60} suffix="ans" />
+
+          <div className="border-t border-border pt-4">
+            <ParamSlider label="Frais d'entrée" value={params.fraisEntree} onChange={v => update("fraisEntree", v)} min={0} max={4.8} step={0.1} suffix="%" tooltip="Frais prélevés sur chaque versement (0 à 4,8 %)" />
+          </div>
         </div>
       </div>
     </div>

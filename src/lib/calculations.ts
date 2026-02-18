@@ -5,6 +5,7 @@ export interface SCPIParams {
   versementMensuel: number;
   dureeVersements: number; // years
   dureeTotale: number; // years
+  fraisEntree: number; // %
 }
 
 export interface SCPIRow {
@@ -22,12 +23,14 @@ export function calculateSCPI(p: SCPIParams): SCPIRow[] {
   const rows: SCPIRow[] = [];
   let versementsCumules = 0;
   let revenusCumules = 0;
+  const coefNet = 1 - p.fraisEntree / 100;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementAnnuel = versementBrut * coefNet;
 
     if (annee === 1) {
-      versementsCumules = p.versementInitial + versementAnnuel;
+      versementsCumules = p.versementInitial * coefNet + versementAnnuel;
     } else {
       versementsCumules += versementAnnuel;
     }
