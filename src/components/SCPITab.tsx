@@ -139,7 +139,7 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
           <ParamSlider label="Durée totale" value={params.dureeTotale} onChange={v => update("dureeTotale", v)} min={1} max={60} suffix="ans" />
 
           <div className="border-t border-border pt-4">
-            <ParamSlider label="Frais d'entrée" value={params.fraisEntree} onChange={v => update("fraisEntree", v)} min={0} max={4.8} step={0.1} suffix="%" tooltip="Frais prélevés sur chaque versement (0 à 4,8 %)" />
+            <ParamSlider label="Droit d'entrée" value={params.fraisEntree} onChange={v => update("fraisEntree", v)} min={0} max={4.8} step={0.1} suffix="%" tooltip="Frais prélevés sur chaque versement (0 à 4,8 %)" />
           </div>
         </div>
       </div>
