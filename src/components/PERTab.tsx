@@ -4,7 +4,7 @@ import { exportPDF } from "@/lib/pdf-export";
 import ParamSlider from "@/components/ParamSlider";
 import KPICards from "@/components/KPICards";
 import SimChart from "@/components/SimChart";
-import SimTable from "@/components/SimTable";
+import SimTable, { YEARS_TO_SHOW } from "@/components/SimTable";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -58,7 +58,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
         ...(params.renteActive ? { "Taux de conversion": `${params.tauxConversion} %` } : {}),
       },
       headers,
-      rows: rows.map(r => {
+      rows: rows.filter(r => YEARS_TO_SHOW.includes(r.annee)).map(r => {
         const base: (string | number)[] = [r.annee, r.versementsCumules, r.versementAnnuel, r.gainsAnnuels, r.gainsCumules, r.capital];
         if (params.renteActive) base.push(r.renteMensuelle ?? 0);
         return base;
