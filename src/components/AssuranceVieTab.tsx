@@ -4,7 +4,7 @@ import { exportPDF } from "@/lib/pdf-export";
 import ParamSlider from "@/components/ParamSlider";
 import KPICards from "@/components/KPICards";
 import SimChart from "@/components/SimChart";
-import SimTable from "@/components/SimTable";
+import SimTable, { YEARS_TO_SHOW } from "@/components/SimTable";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -54,7 +54,7 @@ export default function AssuranceVieTab({ clientInfo }: AVTabProps) {
         ...(params.fraisActifs ? { "Frais annuels": `${params.frais} %` } : {}),
       },
       headers: ["Année", "Vers. cumulés", "Vers. annuel", "Intérêts ann.", "Intérêts cum.", "Capital"],
-      rows: rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.interetsAnnuels, r.interetsCumules, r.capital]),
+      rows: rows.filter(r => YEARS_TO_SHOW.includes(r.annee)).map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.interetsAnnuels, r.interetsCumules, r.capital]),
     });
   };
 
