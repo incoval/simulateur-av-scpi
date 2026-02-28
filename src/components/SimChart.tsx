@@ -34,7 +34,7 @@ export default function SimChart({ data, capitalLabel = "Capital", interetsLabel
         <h3 className="font-serif text-foreground">Projection</h3>
         <div className="flex items-center gap-2" data-html2canvas-ignore="true">
           <Switch id="show-line" checked={showLine} onCheckedChange={setShowLine} />
-          <Label htmlFor="show-line" className="text-xs text-muted-foreground cursor-pointer">Courbe {interetsLabel}</Label>
+          <Label htmlFor="show-line" className="text-xs text-muted-foreground cursor-pointer">Courbe Capital total</Label>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={280}>
@@ -47,7 +47,7 @@ export default function SimChart({ data, capitalLabel = "Capital", interetsLabel
           <Bar dataKey="versementsCumules" name="Versements cumulés" stackId="a" fill="hsl(220 55% 18%)" radius={[0, 0, 0, 0]} />
           <Bar dataKey="interetsCumules" name={interetsLabel} stackId="a" fill="hsl(38 70% 52%)" radius={[4, 4, 0, 0]} />
           {showLine && (
-            <Line type="monotone" dataKey="interetsCumules" name={interetsLabel} stroke="hsl(38 85% 45%)" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="capital" name="Capital total" stroke="hsl(150 60% 40%)" strokeWidth={2} dot={false} />
           )}
         </ComposedChart>
       </ResponsiveContainer>
