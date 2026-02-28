@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from "react";
 import { calculateSCPI, SCPIParams, formatEuro } from "@/lib/calculations";
 import { exportPDFWithChart } from "@/lib/pdf-export";
+import { YEARS_TO_SHOW } from "@/components/SimTable";
 import ParamSlider from "@/components/ParamSlider";
 import KPICards from "@/components/KPICards";
 import SCPIChart from "@/components/SCPIChart";
@@ -51,6 +52,10 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
       return;
     }
     setExportError("");
+    const tableHeaders = ["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Rés. cumulés (€)", "Revenus cum. (€)", "Capital (€)"];
+    const tableRows = rows
+      .filter(r => YEARS_TO_SHOW.includes(r.annee))
+      .map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.resultatCumules, r.revenusCumules, r.capital]);
     await exportPDFWithChart({
       title: "Simulation SCPI",
       client: { nom: clientInfo.nom, prenom: clientInfo.prenom, age: Number(clientInfo.age) },
@@ -64,6 +69,8 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
       },
       kpis,
       chartElement: chartRef.current,
+      tableHeaders,
+      tableRows,
     });
   };
 

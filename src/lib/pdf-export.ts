@@ -36,6 +36,8 @@ interface PDFChartExportOptions {
   params: Record<string, string>;
   kpis: KPI[];
   chartElement: HTMLElement;
+  tableHeaders?: string[];
+  tableRows?: (string | number)[][];
 }
 
 export function exportPDF(options: PDFExportOptions) {
@@ -81,7 +83,7 @@ export function exportPDF(options: PDFExportOptions) {
 
 export async function exportPDFWithChart(options: PDFChartExportOptions) {
   const doc = new jsPDF('p', 'mm', 'a4');
-  const { title, client, params, kpis, chartElement } = options;
+  const { title, client, params, kpis, chartElement, tableHeaders, tableRows } = options;
   const now = new Date().toLocaleDateString('fr-FR');
   const pageWidth = 210;
   const margin = 14;
@@ -155,6 +157,38 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
     doc.setFontSize(9);
     doc.setTextColor(150, 150, 150);
     doc.text('(Graphique non disponible)', margin, y + 10);
+  }
+
+  // Table below chart
+  if (tableHeaders && tableRows && tableRows.length > 0) {
+    const lastY = (doc as any).lastAutoTable?.finalY ?? y + 120;
+    const tableStartY = Math.min(lastY, (doc as any).internal?.pageSize?.height ?? 280);
+    
+    // Get current Y position after chart
+    let currentY: number;
+    try {
+      // Estimate position after chart image
+      const canvas = await html2canvas(chartElement, { scale: 1, logging: false });
+      const imgHeight = (canvas.height / canvas.width) * contentWidth;
+      currentY = y + imgHeight + 8;
+    } catch {
+      currentY = y + 80;
+    }
+
+    // Add new page if not enough space
+    if (currentY > 250) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [tableHeaders],
+      body: tableRows.map(row => row.map((cell, ci) => ci === 0 ? String(cell) : (typeof cell === 'number' ? sanitize(formatNumber(cell)) : sanitize(String(cell))))),
+      styles: { fontSize: 6, cellPadding: 1.5 },
+      headStyles: { fillColor: [30, 45, 80], textColor: 255, fontSize: 6 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
   }
 
   doc.save(`${title.replace(/\s+/g, '_')}_${client.nom}_${now}.pdf`);
