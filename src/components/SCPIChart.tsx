@@ -47,7 +47,7 @@ export default function SCPIChart({ data }: SCPIChartProps) {
     <div className="bg-card rounded-2xl border border-border/50 shadow-sm p-5 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-serif text-foreground">Projection</h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" data-html2canvas-ignore="true">
           <Switch id="show-capital-line" checked={showCapitalLine} onCheckedChange={setShowCapitalLine} />
           <Label htmlFor="show-capital-line" className="text-xs text-muted-foreground cursor-pointer">
             Courbe Capital
