@@ -7,6 +7,8 @@ import KPICards from "@/components/KPICards";
 import SCPIChart from "@/components/SCPIChart";
 import SimTable from "@/components/SimTable";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { RotateCcw } from "lucide-react";
 
 const PRESETS = [3, 4, 5, 6, 7];
@@ -18,6 +20,7 @@ const DEFAULTS: SCPIParams = {
   dureeVersements: 25,
   dureeTotale: 50,
   fraisEntree: 0,
+  reinvestir: false,
 };
 
 interface SCPITabProps {
@@ -66,6 +69,7 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
         "Durée versements": `${params.dureeVersements} ans`,
         "Durée totale": `${params.dureeTotale} ans`,
         ...(params.fraisEntree > 0 ? { "Frais d'entrée": `${params.fraisEntree} %` } : {}),
+        ...(params.reinvestir ? { "Réinvestissement": "Oui" } : {}),
       },
       kpis,
       chartElement: chartRef.current,
@@ -145,8 +149,15 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
           <ParamSlider label="Durée versements" value={params.dureeVersements} onChange={v => update("dureeVersements", v)} min={1} max={50} suffix="ans" />
           <ParamSlider label="Durée totale" value={params.dureeTotale} onChange={v => update("dureeTotale", v)} min={1} max={60} suffix="ans" />
 
-          <div className="border-t border-border pt-4">
+          <div className="border-t border-border pt-4 space-y-3">
             <ParamSlider label="Droit d'entrée" value={params.fraisEntree} onChange={v => update("fraisEntree", v)} min={0} max={4.8} step={0.1} suffix="%" tooltip="Frais prélevés sur chaque versement (0 à 4,8 %)" />
+            <div className="flex items-center justify-between">
+              <Label className="param-label text-xs">Réinvestir les loyers</Label>
+              <Switch checked={params.reinvestir} onCheckedChange={v => setParams(p => ({ ...p, reinvestir: v }))} />
+            </div>
+            {params.reinvestir && (
+              <p className="text-[10px] text-muted-foreground">Les revenus sont réinjectés dans le capital chaque année.</p>
+            )}
           </div>
         </div>
       </div>
