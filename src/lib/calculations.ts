@@ -15,7 +15,6 @@ export interface SCPIRow {
   versementAnnuel: number;
   revenuMensuel: number;
   revenuAnnuel: number;
-  resultatCumules: number;
   revenusCumules: number;
   capital: number;
 }
@@ -45,13 +44,12 @@ export function calculateSCPI(p: SCPIParams): SCPIRow[] {
 
     if (p.reinvestir) {
       capital += revenuAnnuel;
+      versementsCumules += revenuAnnuel;
     }
-
-    const resultatCumules = revenusCumules;
 
     rows.push({
       annee, versementsCumules, versementAnnuel,
-      revenuMensuel, revenuAnnuel, resultatCumules,
+      revenuMensuel, revenuAnnuel,
       revenusCumules, capital,
     });
   }

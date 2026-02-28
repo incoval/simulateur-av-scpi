@@ -165,11 +165,18 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
   // Hide elements marked for exclusion
   const hiddenEls = chartElement.querySelectorAll<HTMLElement>('[data-html2canvas-ignore]');
   hiddenEls.forEach(el => el.style.display = 'none');
+  
+  // Temporarily remove padding from chart container for tighter capture
+  const originalPadding = chartElement.style.padding;
+  chartElement.style.padding = '8px';
+  
   try {
     const canvas = await html2canvas(chartElement, {
       scale: 2,
       backgroundColor: '#ffffff',
       logging: false,
+      width: chartElement.scrollWidth,
+      height: chartElement.scrollHeight,
     });
     const imgData = canvas.toDataURL('image/png');
     const imgWidth = contentWidth;
@@ -183,6 +190,7 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
     chartImgHeight = 15;
   } finally {
     hiddenEls.forEach(el => el.style.display = '');
+    chartElement.style.padding = originalPadding;
   }
 
   // ── Table below chart ──
