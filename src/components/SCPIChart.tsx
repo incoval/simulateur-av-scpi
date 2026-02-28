@@ -39,7 +39,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function SCPIChart({ data }: SCPIChartProps) {
-  const [showCapitalLine, setShowCapitalLine] = useState(true);
+  const [showLine, setShowLine] = useState(false);
 
   const tickInterval = data.length > 35 ? (data.length > 45 ? 4 : 1) : 0;
 
@@ -48,9 +48,9 @@ export default function SCPIChart({ data }: SCPIChartProps) {
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-serif text-foreground">Projection</h3>
         <div className="flex items-center gap-2" data-html2canvas-ignore="true">
-          <Switch id="show-capital-line" checked={showCapitalLine} onCheckedChange={setShowCapitalLine} />
-          <Label htmlFor="show-capital-line" className="text-xs text-muted-foreground cursor-pointer">
-            Courbe Capital
+          <Switch id="show-line" checked={showLine} onCheckedChange={setShowLine} />
+          <Label htmlFor="show-line" className="text-xs text-muted-foreground cursor-pointer">
+            Courbe Revenus cumulés
           </Label>
         </div>
       </div>
@@ -85,12 +85,12 @@ export default function SCPIChart({ data }: SCPIChartProps) {
             fill="hsl(38 70% 52%)"
             radius={[2, 2, 0, 0]}
           />
-          {showCapitalLine && (
+          {showLine && (
             <Line
               type="monotone"
-              dataKey="capital"
-              name="Capital"
-              stroke="hsl(220 55% 18%)"
+              dataKey="revenusCumules"
+              name="Revenus cumulés"
+              stroke="hsl(38 85% 45%)"
               strokeWidth={2}
               dot={false}
             />
