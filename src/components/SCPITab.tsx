@@ -38,22 +38,10 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
   const rows = useMemo(() => calculateSCPI(params), [params]);
   const last = rows[rows.length - 1];
 
-  const coefNet = 1 - params.fraisEntree / 100;
-  const versementsPoche = (params.versementInitial + params.versementMensuel * 12 * params.dureeVersements) * coefNet;
-
   const kpis = [
     { label: "Capital final", value: formatEuro(last?.capital ?? 0) },
-    {
-      label: "Versements cumulés",
-      value: formatEuro(last?.versementsCumules ?? 0),
-      ...(params.reinvestir ? { subtitle: `dont ${formatEuro(versementsPoche)} de votre poche` } : {}),
-    },
-    {
-      label: "Revenus cumulés",
-      value: formatEuro(last?.revenusCumules ?? 0),
-      tooltip: "Total des revenus perçus sur la durée",
-      ...(params.reinvestir ? { subtitle: `dont ${formatEuro((last?.versementsCumules ?? 0) - versementsPoche)} réinvestis` } : {}),
-    },
+    { label: "Versements cumulés", value: formatEuro(last?.versementsCumules ?? 0) },
+    { label: "Revenus cumulés", value: formatEuro(last?.revenusCumules ?? 0) },
     { label: `Revenu mensuel (an ${params.dureeTotale})`, value: formatEuro(last?.revenuMensuel ?? 0) },
   ];
 
@@ -94,7 +82,7 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Left — Results */}
       <div className="flex-1 min-w-0">
-        <KPICards kpis={kpis} />
+        <KPICards kpis={kpis.map((k, i) => i === 2 ? { ...k, tooltip: "Total des revenus perçus sur la durée" } : k)} />
         <div ref={chartRef}>
           <SCPIChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, revenusCumules: r.revenusCumules, revenuAnnuel: r.revenuAnnuel, revenuMensuel: r.revenuMensuel }))} />
         </div>

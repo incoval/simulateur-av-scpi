@@ -5,7 +5,6 @@ interface KPI {
   label: string;
   value: string;
   tooltip?: string;
-  subtitle?: string;
 }
 
 interface KPICardsProps {
@@ -29,9 +28,6 @@ export default function KPICards({ kpis }: KPICardsProps) {
             )}
           </div>
           <p className="text-xl font-bold text-foreground font-serif">{kpi.value}</p>
-          {kpi.subtitle && (
-            <p className="text-[10px] text-muted-foreground mt-0.5">{kpi.subtitle}</p>
-          )}
         </div>
       ))}
     </div>
