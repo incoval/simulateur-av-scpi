@@ -41,6 +41,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function SCPIChart({ data }: SCPIChartProps) {
   const [showLine, setShowLine] = useState(false);
 
+  const chartData = data.map(d => ({
+    ...d,
+    capitalTotal: d.versementsCumules + d.revenusCumules,
+  }));
+
   const tickInterval = data.length > 35 ? (data.length > 45 ? 4 : 1) : 0;
 
   return (
@@ -56,7 +61,7 @@ export default function SCPIChart({ data }: SCPIChartProps) {
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
-        <ComposedChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+        <ComposedChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 15% 90%)" />
           <XAxis
             dataKey="annee"
@@ -88,7 +93,7 @@ export default function SCPIChart({ data }: SCPIChartProps) {
           {showLine && (
             <Line
               type="monotone"
-              dataKey="capital"
+              dataKey="capitalTotal"
               name="Capital total"
               stroke="hsl(150 60% 40%)"
               strokeWidth={2}
