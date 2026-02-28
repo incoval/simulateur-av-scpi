@@ -89,59 +89,89 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
   const margin = 14;
   const contentWidth = pageWidth - margin * 2;
 
-  // Title
-  doc.setFontSize(20);
-  doc.setTextColor(30, 45, 80);
-  doc.text(title, margin, 22);
+  // Colors
+  const navy: [number, number, number] = [30, 45, 80];
+  const gold: [number, number, number] = [180, 140, 60];
 
-  // Date
-  doc.setFontSize(10);
-  doc.setTextColor(120, 120, 120);
-  doc.text(`Date d'édition : ${now}`, margin, 30);
+  // ── Header bar ──
+  doc.setFillColor(...navy);
+  doc.rect(0, 0, pageWidth, 32, 'F');
 
-  // Client info
+  doc.setFontSize(22);
+  doc.setTextColor(255, 255, 255);
+  doc.text(title, margin, 18);
+
+  doc.setFontSize(9);
+  doc.setTextColor(200, 210, 230);
+  doc.text(`Date d'edition : ${now}`, margin, 26);
+
+  // ── Client info line ──
+  let y = 42;
+  doc.setFillColor(245, 246, 250);
+  doc.roundedRect(margin, y - 6, contentWidth, 12, 2, 2, 'F');
   doc.setFontSize(11);
-  doc.setTextColor(50, 50, 50);
-  doc.text(`Client : ${client.prenom} ${client.nom} — ${client.age} ans`, margin, 40);
+  doc.setTextColor(...navy);
+  doc.text(`Client : ${client.prenom} ${client.nom} — ${client.age} ans`, margin + 4, y + 1);
 
-  // Params
-  let y = 50;
+  // ── Hypothèses in a subtle box ──
+  y += 16;
+  const paramEntries = Object.entries(params);
+  const paramBoxHeight = 8 + paramEntries.length * 5.5;
+  doc.setDrawColor(220, 220, 230);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, y - 5, contentWidth, paramBoxHeight, 2, 2, 'S');
+
   doc.setFontSize(10);
+  doc.setTextColor(...navy);
+  doc.text('Hypotheses', margin + 4, y + 1);
+  y += 7;
+
+  doc.setFontSize(9);
   doc.setTextColor(80, 80, 80);
-  doc.text('Hypothèses :', margin, y);
-  y += 6;
-  Object.entries(params).forEach(([key, value]) => {
-    doc.text(sanitize(`• ${key} : ${value}`), margin + 4, y);
-    y += 5;
+  paramEntries.forEach(([key, value]) => {
+    doc.setTextColor(100, 100, 110);
+    doc.text(sanitize(`${key}`), margin + 6, y);
+    const keyWidth = doc.getTextWidth(sanitize(key));
+    doc.setTextColor(...navy);
+    doc.text(sanitize(value), margin + 8 + keyWidth, y);
+    y += 5.5;
   });
 
   y += 6;
 
-  // KPIs as a grid
-  doc.setFontSize(10);
-  doc.setTextColor(30, 45, 80);
-  doc.text('Résultats clés', margin, y);
-  y += 6;
+  // ── KPI cards ──
+  const kpiCardWidth = (contentWidth - 6) / 2;
+  const kpiCardHeight = 18;
 
-  const kpiColWidth = contentWidth / 2;
   kpis.forEach((kpi, i) => {
     const col = i % 2;
     const row = Math.floor(i / 2);
-    const xPos = margin + col * kpiColWidth;
-    const yPos = y + row * 12;
+    const xPos = margin + col * (kpiCardWidth + 6);
+    const yPos = y + row * (kpiCardHeight + 4);
 
-    doc.setFontSize(9);
-    doc.setTextColor(120, 120, 120);
-    doc.text(sanitize(kpi.label), xPos, yPos);
+    // Card background
+    doc.setFillColor(245, 246, 250);
+    doc.roundedRect(xPos, yPos, kpiCardWidth, kpiCardHeight, 2, 2, 'F');
 
-    doc.setFontSize(12);
-    doc.setTextColor(30, 45, 80);
-    doc.text(sanitize(kpi.value), xPos, yPos + 5);
+    // Gold accent bar on left
+    doc.setFillColor(...gold);
+    doc.rect(xPos, yPos + 2, 1.2, kpiCardHeight - 4, 'F');
+
+    // Label
+    doc.setFontSize(8);
+    doc.setTextColor(110, 115, 130);
+    doc.text(sanitize(kpi.label), xPos + 5, yPos + 6);
+
+    // Value
+    doc.setFontSize(13);
+    doc.setTextColor(...navy);
+    doc.text(sanitize(kpi.value), xPos + 5, yPos + 13.5);
   });
 
-  y += Math.ceil(kpis.length / 2) * 12 + 8;
+  y += Math.ceil(kpis.length / 2) * (kpiCardHeight + 4) + 6;
 
-  // Chart capture
+  // ── Chart capture ──
+  let chartImgHeight = 0;
   try {
     const canvas = await html2canvas(chartElement, {
       scale: 2,
@@ -150,32 +180,20 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
     });
     const imgData = canvas.toDataURL('image/png');
     const imgWidth = contentWidth;
-    const imgHeight = (canvas.height / canvas.width) * imgWidth;
+    chartImgHeight = (canvas.height / canvas.width) * imgWidth;
 
-    doc.addImage(imgData, 'PNG', margin, y, imgWidth, imgHeight);
+    doc.addImage(imgData, 'PNG', margin, y, imgWidth, chartImgHeight);
   } catch (e) {
     doc.setFontSize(9);
     doc.setTextColor(150, 150, 150);
     doc.text('(Graphique non disponible)', margin, y + 10);
+    chartImgHeight = 20;
   }
 
-  // Table below chart
+  // ── Table below chart ──
   if (tableHeaders && tableRows && tableRows.length > 0) {
-    const lastY = (doc as any).lastAutoTable?.finalY ?? y + 120;
-    const tableStartY = Math.min(lastY, (doc as any).internal?.pageSize?.height ?? 280);
-    
-    // Get current Y position after chart
-    let currentY: number;
-    try {
-      // Estimate position after chart image
-      const canvas = await html2canvas(chartElement, { scale: 1, logging: false });
-      const imgHeight = (canvas.height / canvas.width) * contentWidth;
-      currentY = y + imgHeight + 8;
-    } catch {
-      currentY = y + 80;
-    }
+    let currentY = y + chartImgHeight + 8;
 
-    // Add new page if not enough space
     if (currentY > 250) {
       doc.addPage();
       currentY = 20;
@@ -185,10 +203,21 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
       startY: currentY,
       head: [tableHeaders],
       body: tableRows.map(row => row.map((cell, ci) => ci === 0 ? String(cell) : (typeof cell === 'number' ? sanitize(formatNumber(cell)) : sanitize(String(cell))))),
-      styles: { fontSize: 6, cellPadding: 1.5 },
-      headStyles: { fillColor: [30, 45, 80], textColor: 255, fontSize: 6 },
-      alternateRowStyles: { fillColor: [245, 245, 245] },
+      styles: { fontSize: 6.5, cellPadding: 2 },
+      headStyles: { fillColor: navy, textColor: 255, fontSize: 6.5, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 248, 252] },
+      margin: { left: margin, right: margin },
     });
+  }
+
+  // ── Footer ──
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7);
+    doc.setTextColor(170, 170, 180);
+    doc.text('Document de simulation - les performances passees ne prejugent pas des performances futures.', margin, 290);
+    doc.text(`Page ${i}/${pageCount}`, pageWidth - margin - 15, 290);
   }
 
   doc.save(`${title.replace(/\s+/g, '_')}_${client.nom}_${now}.pdf`);
