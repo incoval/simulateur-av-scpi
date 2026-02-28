@@ -162,6 +162,9 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
 
   // ── Chart capture (reduced height) ──
   let chartImgHeight = 0;
+  // Hide elements marked for exclusion
+  const hiddenEls = chartElement.querySelectorAll<HTMLElement>('[data-html2canvas-ignore]');
+  hiddenEls.forEach(el => el.style.display = 'none');
   try {
     const canvas = await html2canvas(chartElement, {
       scale: 2,
@@ -178,6 +181,8 @@ export async function exportPDFWithChart(options: PDFChartExportOptions) {
     doc.setTextColor(150, 150, 150);
     doc.text('(Graphique non disponible)', margin, y + 10);
     chartImgHeight = 15;
+  } finally {
+    hiddenEls.forEach(el => el.style.display = '');
   }
 
   // ── Table below chart ──
