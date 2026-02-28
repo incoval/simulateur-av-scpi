@@ -55,10 +55,10 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
       return;
     }
     setExportError("");
-    const tableHeaders = ["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Rés. cumulés (€)", "Revenus cum. (€)", "Capital (€)"];
+    const tableHeaders = ["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Revenus cum. (€)", "Capital (€)"];
     const tableRows = rows
       .filter(r => YEARS_TO_SHOW.includes(r.annee))
-      .map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.resultatCumules, r.revenusCumules, r.capital]);
+      .map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.revenusCumules, r.capital]);
     await exportPDFWithChart({
       title: "Simulation SCPI",
       client: { nom: clientInfo.nom, prenom: clientInfo.prenom, age: Number(clientInfo.age) },
@@ -87,8 +87,8 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
           <SCPIChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, revenusCumules: r.revenusCumules, revenuAnnuel: r.revenuAnnuel, revenuMensuel: r.revenuMensuel }))} />
         </div>
         <SimTable
-          headers={["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Rés. cumulés (€)", "Revenus cum. (€)", "Capital (€)"]}
-          rows={rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.resultatCumules, r.revenusCumules, r.capital])}
+          headers={["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Rev. mensuel (€)", "Rev. annuel (€)", "Revenus cum. (€)", "Capital (€)"]}
+          rows={rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.revenuMensuel, r.revenuAnnuel, r.revenusCumules, r.capital])}
           onExport={handleExport}
           exportDisabled={false}
           exportError={exportError}
