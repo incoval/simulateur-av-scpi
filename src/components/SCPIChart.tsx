@@ -50,7 +50,7 @@ export default function SCPIChart({ data }: SCPIChartProps) {
         <div className="flex items-center gap-2" data-html2canvas-ignore="true">
           <Switch id="show-line" checked={showLine} onCheckedChange={setShowLine} />
           <Label htmlFor="show-line" className="text-xs text-muted-foreground cursor-pointer">
-            Courbe Revenus cumulés
+            Courbe Capital total
           </Label>
         </div>
       </div>
@@ -88,9 +88,9 @@ export default function SCPIChart({ data }: SCPIChartProps) {
           {showLine && (
             <Line
               type="monotone"
-              dataKey="revenusCumules"
-              name="Revenus cumulés"
-              stroke="hsl(38 85% 45%)"
+              dataKey="capital"
+              name="Capital total"
+              stroke="hsl(150 60% 40%)"
               strokeWidth={2}
               dot={false}
             />
