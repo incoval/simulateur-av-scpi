@@ -80,7 +80,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
             ? [{ label: "Rente mensuelle estimée", value: formatEuro(renteMensuelle), tooltip: "Estimation basée sur le taux de conversion" }]
             : [{ label: `Gains an ${params.dureeTotale}`, value: formatEuro(last?.gainsAnnuels ?? 0) }]),
         ]} />
-        <SimChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules }))} />
+        <SimChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, interetsCumules: r.gainsCumules }))} interetsLabel="Gains cumulés" />
         <SimTable
           headers={tableHeaders}
           rows={rows.map(r => {

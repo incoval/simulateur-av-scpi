@@ -69,7 +69,7 @@ export default function AssuranceVieTab({ clientInfo }: AVTabProps) {
           { label: "Intérêts cumulés", value: formatEuro(last?.interetsCumules ?? 0), tooltip: "Total des intérêts générés" },
           { label: "Capital / Versements", value: `× ${ratio}`, tooltip: "Effet de levier de vos versements" },
         ]} />
-        <SimChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules }))} />
+        <SimChart data={rows.map(r => ({ annee: r.annee, capital: r.capital, versementsCumules: r.versementsCumules, interetsCumules: r.interetsCumules }))} interetsLabel="Intérêts cumulés" />
         <SimTable
           headers={["Année", "Vers. cumulés (€)", "Vers. annuel (€)", "Intérêts ann. (€)", "Intérêts cum. (€)", "Capital (€)"]}
           rows={rows.map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.interetsAnnuels, r.interetsCumules, r.capital])}
