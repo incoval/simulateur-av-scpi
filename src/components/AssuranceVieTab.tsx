@@ -48,7 +48,7 @@ export default function AssuranceVieTab({ clientInfo }: AVTabProps) {
       title: "Simulation Assurance Vie",
       client: { nom: clientInfo.nom, prenom: clientInfo.prenom, age: Number(clientInfo.age) },
       params: {
-        "Rendement annuel": `${params.rendement} %`,
+        "Rentabilité annuelle": `${params.rendement} %`,
         "Capital initial": formatEuro(params.capitalInitial),
         "Versement mensuel": formatEuro(params.versementMensuel),
         "Durée versements": `${params.dureeVersements} ans`,
