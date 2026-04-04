@@ -62,6 +62,8 @@ export interface AVParams {
   rendement: number;
   frais: number; // %
   fraisActifs: boolean;
+  fraisEntree: number; // %
+  fraisEntreeActifs: boolean;
 }
 
 export interface AVRow {
