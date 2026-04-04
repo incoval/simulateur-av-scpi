@@ -114,6 +114,8 @@ export interface PERParams {
   rendement: number;
   renteActive: boolean;
   tauxConversion: number; // %
+  fraisEntree: number; // %
+  fraisEntreeActifs: boolean;
 }
 
 export interface PERRow {
