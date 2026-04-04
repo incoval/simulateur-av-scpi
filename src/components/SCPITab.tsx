@@ -19,7 +19,6 @@ const DEFAULTS: SCPIParams = {
   versementMensuel: 750,
   dureeVersements: 25,
   dureeTotale: 50,
-  fraisEntree: 0,
   reinvestir: false,
 };
 
