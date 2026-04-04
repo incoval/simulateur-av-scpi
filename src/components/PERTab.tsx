@@ -52,7 +52,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
       title: "Simulation PER",
       client: { nom: clientInfo.nom, prenom: clientInfo.prenom, age: Number(clientInfo.age) },
       params: {
-        "Rendement annuel": `${params.rendement} %`,
+        "Rentabilité annuelle": `${params.rendement} %`,
         "Capital initial": formatEuro(params.capitalInitial),
         "Versement mensuel": formatEuro(params.versementMensuel),
         "Durée versements": `${params.dureeVersements} ans`,
@@ -106,7 +106,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
           </div>
 
           <div>
-            <span className="param-label text-xs block mb-2">Taux de rendement</span>
+            <span className="param-label text-xs block mb-2">Taux de rentabilité</span>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {PRESETS.map(p => (
                 <button
@@ -131,9 +131,9 @@ export default function PERTab({ clientInfo }: PERTabProps) {
               </button>
             </div>
             {customRate && (
-              <ParamSlider label="Rendement" value={params.rendement} onChange={v => update("rendement", v)} min={0} max={15} step={0.1} suffix="%" />
+              <ParamSlider label="Rentabilité" value={params.rendement} onChange={v => update("rendement", v)} min={0} max={15} step={0.1} suffix="%" />
             )}
-            <p className="text-[10px] text-muted-foreground mt-1">Le rendement est une hypothèse, non garanti.</p>
+            <p className="text-[10px] text-muted-foreground mt-1">La rentabilité est une hypothèse, non garantie.</p>
           </div>
 
           <ParamSlider label="Capital initial" value={params.capitalInitial} onChange={v => update("capitalInitial", v)} min={0} max={500000} step={1000} suffix="€" />
