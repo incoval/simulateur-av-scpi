@@ -67,7 +67,6 @@ export default function SCPITab({ clientInfo }: SCPITabProps) {
         "Versement mensuel": formatEuro(params.versementMensuel),
         "Durée versements": `${params.dureeVersements} ans`,
         "Durée totale": `${params.dureeTotale} ans`,
-        ...(params.fraisEntree > 0 ? { "Frais d'entrée": `${params.fraisEntree} %` } : {}),
         ...(params.reinvestir ? { "Réinvestissement": "Oui" } : {}),
       },
       kpis,
