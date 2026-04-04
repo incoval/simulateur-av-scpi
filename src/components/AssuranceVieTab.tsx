@@ -54,6 +54,7 @@ export default function AssuranceVieTab({ clientInfo }: AVTabProps) {
         "Durée versements": `${params.dureeVersements} ans`,
         "Durée totale": `${params.dureeTotale} ans`,
         ...(params.fraisActifs ? { "Frais annuels": `${params.frais} %` } : {}),
+        ...(params.fraisEntreeActifs ? { "Frais d'entrée": `${params.fraisEntree} %` } : {}),
       },
       headers: ["Année", "Vers. cumulés", "Vers. annuel", "Intérêts ann.", "Intérêts cum.", "Capital"],
       rows: rows.filter(r => YEARS_TO_SHOW.includes(r.annee)).map(r => [r.annee, r.versementsCumules, r.versementAnnuel, r.interetsAnnuels, r.interetsCumules, r.capital]),
