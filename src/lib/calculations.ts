@@ -5,7 +5,6 @@ export interface SCPIParams {
   versementMensuel: number;
   dureeVersements: number; // years
   dureeTotale: number; // years
-  fraisEntree: number; // %
   reinvestir: boolean;
 }
 
