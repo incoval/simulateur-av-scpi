@@ -80,7 +80,7 @@ export default function SCPIChart({ data }: SCPIChartProps) {
             dataKey="versementsCumules"
             name="Versements cumulés"
             stackId="a"
-            fill="hsl(220 55% 18%)"
+            fill="hsl(220, 55%, 18%)"
             radius={[0, 0, 0, 0]}
           />
           <Bar
