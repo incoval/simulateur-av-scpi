@@ -5,7 +5,6 @@ export interface SCPIParams {
   versementMensuel: number;
   dureeVersements: number; // years
   dureeTotale: number; // years
-  fraisEntree: number; // %
   reinvestir: boolean;
 }
 
@@ -24,14 +23,12 @@ export function calculateSCPI(p: SCPIParams): SCPIRow[] {
   let versementsCumules = 0;
   let revenusCumules = 0;
   let capital = 0;
-  const coefNet = 1 - p.fraisEntree / 100;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
-    const versementAnnuel = versementBrut * coefNet;
+    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
 
     if (annee === 1) {
-      versementsCumules = p.versementInitial * coefNet + versementAnnuel;
+      versementsCumules = p.versementInitial + versementAnnuel;
       capital = versementsCumules;
     } else {
       versementsCumules += versementAnnuel;
@@ -65,6 +62,8 @@ export interface AVParams {
   rendement: number;
   frais: number; // %
   fraisActifs: boolean;
+  fraisEntree: number; // %
+  fraisEntreeActifs: boolean;
 }
 
 export interface AVRow {
@@ -79,18 +78,21 @@ export interface AVRow {
 export function calculateAV(p: AVParams): AVRow[] {
   const rows: AVRow[] = [];
   const rendementNet = Math.max(0, p.rendement - (p.fraisActifs ? p.frais : 0));
+  const coefNet = 1 - (p.fraisEntreeActifs ? p.fraisEntree / 100 : 0);
   let capital = 0;
   let versementsCumules = 0;
   let interetsCumules = 0;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementAnnuel = versementBrut * coefNet;
 
     if (annee === 1) {
-      versementsCumules = p.capitalInitial + versementAnnuel;
-      const interetsAnnuels = p.capitalInitial * (rendementNet / 100);
+      const capitalInitialNet = p.capitalInitial * coefNet;
+      versementsCumules = capitalInitialNet + versementAnnuel;
+      const interetsAnnuels = capitalInitialNet * (rendementNet / 100);
       interetsCumules += interetsAnnuels;
-      capital = p.capitalInitial + versementAnnuel + interetsAnnuels;
+      capital = capitalInitialNet + versementAnnuel + interetsAnnuels;
       rows.push({ annee, versementsCumules, versementAnnuel, interetsAnnuels, interetsCumules, capital });
     } else {
       versementsCumules += versementAnnuel;
@@ -112,6 +114,8 @@ export interface PERParams {
   rendement: number;
   renteActive: boolean;
   tauxConversion: number; // %
+  fraisEntree: number; // %
+  fraisEntreeActifs: boolean;
 }
 
 export interface PERRow {
@@ -126,18 +130,21 @@ export interface PERRow {
 
 export function calculatePER(p: PERParams): PERRow[] {
   const rows: PERRow[] = [];
+  const coefNet = 1 - (p.fraisEntreeActifs ? p.fraisEntree / 100 : 0);
   let capital = 0;
   let versementsCumules = 0;
   let gainsCumules = 0;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementAnnuel = versementBrut * coefNet;
 
     if (annee === 1) {
-      versementsCumules = p.capitalInitial + versementAnnuel;
-      const gainsAnnuels = p.capitalInitial * (p.rendement / 100);
+      const capitalInitialNet = p.capitalInitial * coefNet;
+      versementsCumules = capitalInitialNet + versementAnnuel;
+      const gainsAnnuels = capitalInitialNet * (p.rendement / 100);
       gainsCumules += gainsAnnuels;
-      capital = p.capitalInitial + versementAnnuel + gainsAnnuels;
+      capital = capitalInitialNet + versementAnnuel + gainsAnnuels;
       rows.push({ annee, versementsCumules, versementAnnuel, gainsAnnuels, gainsCumules, capital });
     } else {
       versementsCumules += versementAnnuel;
