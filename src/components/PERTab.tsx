@@ -57,6 +57,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
         "Versement mensuel": formatEuro(params.versementMensuel),
         "Durée versements": `${params.dureeVersements} ans`,
         "Durée totale": `${params.dureeTotale} ans`,
+        ...(params.fraisEntreeActifs ? { "Frais d'entrée": `${params.fraisEntree} %` } : {}),
         ...(params.renteActive ? { "Taux de conversion": `${params.tauxConversion} %` } : {}),
       },
       headers,
