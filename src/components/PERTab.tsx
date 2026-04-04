@@ -52,7 +52,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
       title: "Simulation PER",
       client: { nom: clientInfo.nom, prenom: clientInfo.prenom, age: Number(clientInfo.age) },
       params: {
-        "Rendement annuel": `${params.rendement} %`,
+        "Rentabilité annuelle": `${params.rendement} %`,
         "Capital initial": formatEuro(params.capitalInitial),
         "Versement mensuel": formatEuro(params.versementMensuel),
         "Durée versements": `${params.dureeVersements} ans`,
