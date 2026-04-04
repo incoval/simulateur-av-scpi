@@ -106,7 +106,7 @@ export default function PERTab({ clientInfo }: PERTabProps) {
           </div>
 
           <div>
-            <span className="param-label text-xs block mb-2">Taux de rendement</span>
+            <span className="param-label text-xs block mb-2">Taux de rentabilité</span>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {PRESETS.map(p => (
                 <button
