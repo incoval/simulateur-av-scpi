@@ -78,18 +78,21 @@ export interface AVRow {
 export function calculateAV(p: AVParams): AVRow[] {
   const rows: AVRow[] = [];
   const rendementNet = Math.max(0, p.rendement - (p.fraisActifs ? p.frais : 0));
+  const coefNet = 1 - (p.fraisEntreeActifs ? p.fraisEntree / 100 : 0);
   let capital = 0;
   let versementsCumules = 0;
   let interetsCumules = 0;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementAnnuel = versementBrut * coefNet;
 
     if (annee === 1) {
-      versementsCumules = p.capitalInitial + versementAnnuel;
-      const interetsAnnuels = p.capitalInitial * (rendementNet / 100);
+      const capitalInitialNet = p.capitalInitial * coefNet;
+      versementsCumules = capitalInitialNet + versementAnnuel;
+      const interetsAnnuels = capitalInitialNet * (rendementNet / 100);
       interetsCumules += interetsAnnuels;
-      capital = p.capitalInitial + versementAnnuel + interetsAnnuels;
+      capital = capitalInitialNet + versementAnnuel + interetsAnnuels;
       rows.push({ annee, versementsCumules, versementAnnuel, interetsAnnuels, interetsCumules, capital });
     } else {
       versementsCumules += versementAnnuel;
