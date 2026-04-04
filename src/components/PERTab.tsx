@@ -131,9 +131,9 @@ export default function PERTab({ clientInfo }: PERTabProps) {
               </button>
             </div>
             {customRate && (
-              <ParamSlider label="Rendement" value={params.rendement} onChange={v => update("rendement", v)} min={0} max={15} step={0.1} suffix="%" />
+              <ParamSlider label="Rentabilité" value={params.rendement} onChange={v => update("rendement", v)} min={0} max={15} step={0.1} suffix="%" />
             )}
-            <p className="text-[10px] text-muted-foreground mt-1">Le rendement est une hypothèse, non garanti.</p>
+            <p className="text-[10px] text-muted-foreground mt-1">La rentabilité est une hypothèse, non garantie.</p>
           </div>
 
           <ParamSlider label="Capital initial" value={params.capitalInitial} onChange={v => update("capitalInitial", v)} min={0} max={500000} step={1000} suffix="€" />
