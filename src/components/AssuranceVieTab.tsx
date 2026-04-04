@@ -20,6 +20,8 @@ const DEFAULTS: AVParams = {
   rendement: 3,
   frais: 0.6,
   fraisActifs: false,
+  fraisEntree: 0,
+  fraisEntreeActifs: false,
 };
 
 interface AVTabProps {
