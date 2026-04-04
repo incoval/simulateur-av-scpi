@@ -23,14 +23,12 @@ export function calculateSCPI(p: SCPIParams): SCPIRow[] {
   let versementsCumules = 0;
   let revenusCumules = 0;
   let capital = 0;
-  const coefNet = 1 - p.fraisEntree / 100;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
-    const versementAnnuel = versementBrut * coefNet;
+    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
 
     if (annee === 1) {
-      versementsCumules = p.versementInitial * coefNet + versementAnnuel;
+      versementsCumules = p.versementInitial + versementAnnuel;
       capital = versementsCumules;
     } else {
       versementsCumules += versementAnnuel;
