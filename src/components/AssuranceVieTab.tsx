@@ -126,7 +126,14 @@ export default function AssuranceVieTab({ clientInfo }: AVTabProps) {
           <ParamSlider label="Durée versements" value={params.dureeVersements} onChange={v => update("dureeVersements", v)} min={1} max={50} suffix="ans" />
           <ParamSlider label="Durée totale" value={params.dureeTotale} onChange={v => update("dureeTotale", v)} min={1} max={60} suffix="ans" />
 
-          <div className="border-t border-border pt-4">
+          <div className="border-t border-border pt-4 space-y-3">
+            <div className="flex items-center justify-between mb-3">
+              <Label className="param-label text-xs">Frais d'entrée</Label>
+              <Switch checked={params.fraisEntreeActifs} onCheckedChange={v => update("fraisEntreeActifs", v)} />
+            </div>
+            {params.fraisEntreeActifs && (
+              <ParamSlider label="Frais d'entrée" value={params.fraisEntree} onChange={v => update("fraisEntree", v)} min={0} max={4.8} step={0.1} suffix="%" tooltip="Frais prélevés sur chaque versement (0 à 4,8 %)" />
+            )}
             <div className="flex items-center justify-between mb-3">
               <Label className="param-label text-xs">Frais annuels</Label>
               <Switch checked={params.fraisActifs} onCheckedChange={v => update("fraisActifs", v)} />

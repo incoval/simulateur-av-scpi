@@ -130,18 +130,21 @@ export interface PERRow {
 
 export function calculatePER(p: PERParams): PERRow[] {
   const rows: PERRow[] = [];
+  const coefNet = 1 - (p.fraisEntreeActifs ? p.fraisEntree / 100 : 0);
   let capital = 0;
   let versementsCumules = 0;
   let gainsCumules = 0;
 
   for (let annee = 1; annee <= p.dureeTotale; annee++) {
-    const versementAnnuel = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementBrut = annee <= p.dureeVersements ? p.versementMensuel * 12 : 0;
+    const versementAnnuel = versementBrut * coefNet;
 
     if (annee === 1) {
-      versementsCumules = p.capitalInitial + versementAnnuel;
-      const gainsAnnuels = p.capitalInitial * (p.rendement / 100);
+      const capitalInitialNet = p.capitalInitial * coefNet;
+      versementsCumules = capitalInitialNet + versementAnnuel;
+      const gainsAnnuels = capitalInitialNet * (p.rendement / 100);
       gainsCumules += gainsAnnuels;
-      capital = p.capitalInitial + versementAnnuel + gainsAnnuels;
+      capital = capitalInitialNet + versementAnnuel + gainsAnnuels;
       rows.push({ annee, versementsCumules, versementAnnuel, gainsAnnuels, gainsCumules, capital });
     } else {
       versementsCumules += versementAnnuel;
