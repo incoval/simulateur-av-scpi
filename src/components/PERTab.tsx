@@ -20,6 +20,8 @@ const DEFAULTS: PERParams = {
   rendement: 4,
   renteActive: false,
   tauxConversion: 4,
+  fraisEntree: 0,
+  fraisEntreeActifs: false,
 };
 
 interface PERTabProps {
